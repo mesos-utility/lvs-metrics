@@ -1,0 +1,64 @@
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port Forward Weight ActiveConn InActConn
+TCP  0A64BCA9:0050 rr  
+  -> 0A64248C:0050      Route   100    3          80        
+  -> 0A642487:0050      Route   100    3          80        
+  -> 0A642489:0050      Route   100    3          80        
+  -> 0A642486:0050      Route   100    3          80        
+  -> 0A64248E:0050      Route   100    3          81        
+  -> 0A642488:0050      Route   100    3          80        
+  -> 0A64248A:0050      Route   100    2          82        
+  -> 0A64248D:0050      Route   100    3          81        
+  -> 0A64248B:0050      Route   100    3          81        
+  -> 0A64248F:0050      Route   100    2          80        
+TCP  0A64BCA8:0050 rr  
+  -> 0A641C76:0050      Route   100    0          10        
+  -> 0A641CC8:0050      Route   100    0          9         
+  -> 0A641CC6:0050      Route   100    0          9         
+  -> 0A641C77:0050      Route   100    0          9         
+  -> 0A641CC7:0050      Route   100    0          9         
+  -> 0A641C78:0050      Route   100    0          9         
+TCP  0A64BCAB:0050 rr  
+  -> 0A640A72:0050      Route   100    0          41        
+  -> 0A640A71:0050      Route   100    0          41        
+  -> 0A640A70:0050      Route   100    0          41        
+  -> 0A64150C:0050      Route   100    0          40        
+  -> 0A64150B:0050      Route   100    0          41        
+TCP  0A64BCAA:0050 wrr  
+  -> 0A6433D1:0050      Route   100    2          41        
+  -> 0A6433D0:0050      Route   100    1          41        
+  -> 0A6433CF:0050      Route   100    1          41        
+  -> 0A64346A:0050      Route   200    3          82        
+  -> 0A643432:0050      Route   100    2          40        
+  -> 0A643431:0050      Route   100    1          41        
+  -> 0A643430:0050      Route   100    1          41        
+  -> 0A64342F:0050      Route   100    2          40        
+  -> 0A64342E:0050      Route   100    1          41        
+  -> 0A64342D:0050      Route   100    2          41        
+  -> 0A6433DA:0050      Route   100    2          40        
+  -> 0A6433D9:0050      Route   100    2          40        
+  -> 0A6433D8:0050      Route   100    2          40        
+  -> 0A6433D7:0050      Route   100    2          40        
+  -> 0A6433D6:0050      Route   100    2          41        
+  -> 0A6433D5:0050      Route   100    2          41        
+  -> 0A6433D4:0050      Route   100    2          41        
+  -> 0A6433D3:0050      Route   100    2          41        
+  -> 0A6433D2:0050      Route   100    2          41        
+TCP  0A64C71A:0CEA rr  
+  -> 0A6402D2:0CEA      Route   100    0          0         
+  -> 0A6402D1:0CEA      Route   100    0          0         
+TCP  0A64BCA2:1F41 rr  
+  -> 0A646F42:1F41      Route   100    0          0         
+TCP  0A64BCAC:0050 rr  
+  -> 0A640668:0050      Route   100    0          0         
+  -> 0A640667:0050      Route   100    0          0         
+  -> 0A640666:0050      Route   100    0          0         
+  -> 0A640665:0050      Route   100    0          0         
+TCP  0A64BCA0:0050 rr  
+  -> 0A640EE8:0050      Route   100    0          0         
+  -> 0A640EE6:0050      Route   100    0          0         
+  -> 0A640EE5:0050      Route   100    0          0         
+  -> 0A640EE4:0050      Route   100    0          0         
+  -> 0A640EE3:0050      Route   100    0          0         
+  -> 0A640EE2:0050      Route   100    0          0 
