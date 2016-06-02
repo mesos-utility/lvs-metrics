@@ -69,8 +69,8 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 				txt = scanner.Text()
 				if strings.Contains(txt, "->") {
 					array := strings.Fields(txt)
-					act, _ := strconv.ParseInt(array[4], 0, 0)
-					inact, _ := strconv.ParseInt(array[5], 0, 0)
+					act, _ := strconv.ParseInt(array[4], 16, 0)
+					inact, _ := strconv.ParseInt(array[5], 16, 0)
 					totalAct += int(act)
 					totalInact += int(inact)
 
