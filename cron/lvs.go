@@ -55,6 +55,7 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
+
 	CONT:
 		totalAct = 0
 		totalInact = 0
@@ -73,7 +74,7 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 					inact, _ := strconv.ParseInt(array[5], 16, 0)
 					totalAct += int(act)
 					totalInact += int(inact)
-
+				} else {
 					vip := &VirtualIPPoint{
 						IP:              ipstr,
 						Port:            int(port),
@@ -81,7 +82,6 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 						TotalInActConn:  totalInact,
 					}
 					vips = append(vips, vip)
-				} else {
 					goto CONT
 				}
 			}

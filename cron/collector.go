@@ -41,69 +41,74 @@ func Collect() {
 
 func collect() {
 	// start collect data for lvs cluster.
-	var attachtags = g.Config().AttachTags
 	var interval int64 = g.Config().Transfer.Interval
-	//var stats = make(map[string]string)
 	var ticker = time.NewTicker(time.Duration(interval) * time.Second)
 
 	for {
-	REST:
 		<-ticker.C
-		hostname, err := g.Hostname()
-		if err != nil {
-			goto REST
-		}
 
 		mvs := []*model.MetricValue{}
-		var tags string
-		if attachtags != "" {
-			tags = attachtags
-		}
-
-		now := time.Now().Unix()
 		vips, err := ParseIPVS(IPVSFILE)
 		if os.IsNotExist(err) {
 			glog.Fatalf("%s", err.Error())
 		}
-		//glog.Infof("%v\n", len(vips))
-		for _, vip := range vips {
-			tag := fmt.Sprintf("%s,vip=%s:%d", tags, vip.IP, vip.Port)
-			metric := &model.MetricValue{
-				Endpoint:  hostname,
-				Metric:    "lvs.ActiveConn",
-				Value:     vip.TotalActiveConn,
-				Timestamp: now,
-				Step:      interval,
-				Type:      "USAGE",
-				Tags:      tag,
-			}
-			mvs = append(mvs, metric)
-			//glog.Infof("%v\n", metric)
 
-			metric = &model.MetricValue{
-				Endpoint:  hostname,
-				Metric:    "lvs.InActConn",
-				Value:     vip.TotalInActConn,
-				Timestamp: now,
-				Step:      interval,
-				Type:      "USAGE",
-				Tags:      tag,
-			}
-			mvs = append(mvs, metric)
-			//glog.Infof("%v\n", metric)
-		}
+		mvs, _ = ConvertVIPs2Metrics(vips)
+		g.SendMetrics(mvs)
 
-		metrics, err := ParseIPVSStats(IPVSSTATSFILE)
+		mvs, err = ParseIPVSStats(IPVSSTATSFILE)
 		if os.IsNotExist(err) {
 			glog.Fatalf("%s", err.Error())
 		}
-		for _, metric := range metrics {
-			mvs = append(mvs, metric)
-		}
-
 		g.SendMetrics(mvs)
-		mvs = nil
 	}
+}
+
+func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, err error) {
+	if len(vips) <= 0 {
+		return nil, nil
+	}
+
+	var tags string
+	var attachtags = g.Config().AttachTags
+	var interval int64 = g.Config().Transfer.Interval
+	if attachtags != "" {
+		tags = attachtags
+	}
+
+	hostname, _ := g.Hostname()
+	now := time.Now().Unix()
+	for _, vip := range vips {
+		var tag string
+		if tags != "" {
+			tag = fmt.Sprintf("%s,vip=%s,port=%d", tags, vip.IP, vip.Port)
+		} else {
+			tag = fmt.Sprintf("vip=%s,port=%d", vip.IP, vip.Port)
+		}
+		metric := &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.active.conn",
+			Value:     vip.TotalActiveConn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "USAGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.inact.conn",
+			Value:     vip.TotalInActConn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "USAGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+	}
+
+	return metrics, nil
 }
 
 // Parse /proc/net/ip_vs_stats
@@ -137,7 +142,6 @@ func ParseIPVSStats(file string) (metrics []*model.MetricValue, err error) {
 			Tags:      attachtags,
 		}
 		metrics = append(metrics, metric)
-		//glog.Infof("%v\n", metric)
 	}
 
 	return metrics, nil
