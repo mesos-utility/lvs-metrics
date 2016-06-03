@@ -13,17 +13,10 @@ mkdir -p var &>/dev/null
 
 ## build & pack
 function build() {
-    commit=$(git log -1 --pretty=%h)
-    cat <<EOF > ./g/git.go
-package g
-const (
-       COMMIT = "$commit"
-)
-EOF
     #go get github.com/tools/godep
     export GO15VENDOREXPERIMENT=0
     #GOPATH=`godep path` godep restore
-    GOPATH="`godep path`:$GOPATH" && go build -o $app main.go
+    GOPATH="`godep path`:$GOPATH" && go build -i -ldflags "-X g.Commit=${COMMIT}" -o $app .
     #GO15VENDOREXPERIMENT=1; go build -o $app main.go
 
     sc=$?

@@ -48,14 +48,16 @@ func collect() {
 		<-ticker.C
 
 		mvs := []*model.MetricValue{}
+
+		// Collect metrics from /proc/net/ip_vs
 		vips, err := ParseIPVS(IPVSFILE)
 		if os.IsNotExist(err) {
 			glog.Fatalf("%s", err.Error())
 		}
-
 		mvs, _ = ConvertVIPs2Metrics(vips)
 		g.SendMetrics(mvs)
 
+		// Collect metrics from /proc/net/ip_vs_stats
 		mvs, err = ParseIPVSStats(IPVSSTATSFILE)
 		if os.IsNotExist(err) {
 			glog.Fatalf("%s", err.Error())

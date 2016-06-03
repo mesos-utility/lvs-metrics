@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/mesos-utility/lvs-metrics",
-	"GoVersion": "go1.5",
-	"GodepVersion": "v70",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v74",
 	"Deps": [
 		{
 			"ImportPath": "github.com/golang/glog",
@@ -14,10 +14,6 @@
 		{
 			"ImportPath": "github.com/open-falcon/common/utils",
 			"Rev": "90353af2020b999010d5448ee553778c1c98dbb9"
-		},
-		{
-			"ImportPath": "github.com/smallfish/memcache",
-			"Rev": "e0d3c8939b9dcfa9cd119bc4e5c3df6d2b87e9a1"
 		},
 		{
 			"ImportPath": "github.com/toolkits/file",
