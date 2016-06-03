@@ -1,8 +1,12 @@
 default: help
 
+COMMIT := $(shell git rev-parse HEAD 2> /dev/null || true)
+
 ## Make bin for lvs-metrics.
-bin: godep
-	./control build
+bin:
+	#./control build
+	GOPATH=`godep path`
+	go build -i -ldflags "-X main.gitCommit=${COMMIT}" -o lvs-metrics .
 
 ## Get godep and restore dep.
 godep:

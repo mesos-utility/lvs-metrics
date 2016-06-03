@@ -85,8 +85,6 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 					goto CONT
 				}
 			}
-		} else {
-			fmt.Printf("skip: %s\n", txt)
 		}
 	}
 

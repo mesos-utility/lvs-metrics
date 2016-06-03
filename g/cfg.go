@@ -22,19 +22,12 @@ type TransferConfig struct {
 	Timeout  int    `json:"timeout"`
 }
 
-// lvs daemon config section
-type DaemonConfig struct {
-	Enable bool     `json:"enable"`
-	Addrs  []string `json:"addrs"`
-}
-
 // global config file
 type GlobalConfig struct {
 	Debug      bool            `json:"debug"`
 	AttachTags string          `json:"attachtags"`
 	Http       *HttpConfig     `json:"http"`
 	Transfer   *TransferConfig `json:"transfer"`
-	Daemon     *DaemonConfig   `json:"daemon"`
 }
 
 var (

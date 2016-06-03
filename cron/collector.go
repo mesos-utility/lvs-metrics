@@ -3,11 +3,10 @@ package cron
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 	"time"
-	//"net"
-	//"regexp"
 
 	"github.com/golang/glog"
 	"github.com/mesos-utility/lvs-metrics/g"
@@ -21,6 +20,11 @@ var STATS = []string{
 	"in.bytes",
 	"out.bytes"}
 
+const (
+	IPVSFILE      = "/proc/net/ip_vs"
+	IPVSSTATSFILE = "/proc/net/ip_vs_stats"
+)
+
 func Collect() {
 	if !g.Config().Transfer.Enable {
 		glog.Warningf("Open falcon transfer is not enabled!!!")
@@ -29,16 +33,6 @@ func Collect() {
 
 	if g.Config().Transfer.Addr == "" {
 		glog.Warningf("Open falcon transfer addr is null!!!")
-		return
-	}
-
-	addrs := g.Config().Daemon.Addrs
-	if !g.Config().Daemon.Enable {
-		glog.Warningf("Daemon collect not enabled in cfg.json!!!")
-
-		if len(addrs) < 1 {
-			glog.Warningf("Not set addrs of daemon in cfg.json!!!")
-		}
 		return
 	}
 
@@ -67,7 +61,10 @@ func collect() {
 		}
 
 		now := time.Now().Unix()
-		vips, _ := ParseIPVS("/proc/net/ip_vs")
+		vips, err := ParseIPVS(IPVSFILE)
+		if os.IsNotExist(err) {
+			glog.Fatalf("%s", err.Error())
+		}
 		//glog.Infof("%v\n", len(vips))
 		for _, vip := range vips {
 			tag := fmt.Sprintf("%s,vip=%s:%d", tags, vip.IP, vip.Port)
@@ -96,7 +93,10 @@ func collect() {
 			//glog.Infof("%v\n", metric)
 		}
 
-		metrics, _ := ParseIPVSStats("/proc/net/ip_vs_stats")
+		metrics, err := ParseIPVSStats(IPVSSTATSFILE)
+		if os.IsNotExist(err) {
+			glog.Fatalf("%s", err.Error())
+		}
 		for _, metric := range metrics {
 			mvs = append(mvs, metric)
 		}
