@@ -44,7 +44,8 @@ func NewVirtualIPPoint(ip string, port, actconn, inactconn int) *VirtualIPPoint 
 
 // Parse /proc/net/ip_vs
 func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
-	var txt string
+	var line string
+	var vip *VirtualIPPoint
 	var totalAct, totalInact int
 
 	f, err := os.Open(file)
@@ -53,29 +54,45 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 	}
 	defer f.Close()
 
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
+	// read line by line for parse.
+	r := bufio.NewReader(f)
+	for {
+		line, err = r.ReadString('\n')
+		if err != nil {
+			break
+		}
 
 	CONT:
 		totalAct = 0
 		totalInact = 0
-		txt = scanner.Text()
-		if find := RE.MatchString(txt); find {
-			array := strings.Fields(txt)
+
+		if find := RE.MatchString(line); find {
+			array := strings.Fields(line)
 			pair := strings.SplitN(array[1], ":", 2)
 			ipstr, _ := Hex2IPV4(pair[0])
 			port, _ := strconv.ParseInt(pair[1], 16, 0)
 
-			for scanner.Scan() {
-				txt = scanner.Text()
-				if strings.Contains(txt, "->") {
-					array := strings.Fields(txt)
+			for {
+				line, err = r.ReadString('\n')
+				if err != nil {
+					vip = &VirtualIPPoint{
+						IP:              ipstr,
+						Port:            int(port),
+						TotalActiveConn: totalAct,
+						TotalInActConn:  totalInact,
+					}
+					vips = append(vips, vip)
+					break
+				}
+
+				if strings.Contains(line, "->") {
+					array := strings.Fields(line)
 					act, _ := strconv.ParseInt(array[4], 16, 0)
 					inact, _ := strconv.ParseInt(array[5], 16, 0)
 					totalAct += int(act)
 					totalInact += int(inact)
 				} else {
-					vip := &VirtualIPPoint{
+					vip = &VirtualIPPoint{
 						IP:              ipstr,
 						Port:            int(port),
 						TotalActiveConn: totalAct,
@@ -86,10 +103,6 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 				}
 			}
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return vips, err
 	}
 
 	return vips, nil
