@@ -20,10 +20,19 @@ var STATS = []string{
 	"in.bytes",
 	"out.bytes"}
 
-const (
-	IPVSFILE      = "/proc/net/ip_vs"
+var IPVSFILE, IPVSSTATSFILE string
+
+func init() {
+	IPVSFILE = "/proc/net/ip_vs"
 	IPVSSTATSFILE = "/proc/net/ip_vs_stats"
-)
+
+	if os.Getenv("LVSDEV") != "" {
+		pwd, _ := os.Getwd()
+
+		IPVSFILE = fmt.Sprintf("%s/resource/ip_vs", pwd)
+		IPVSSTATSFILE = fmt.Sprintf("%s/resource/ip_vs_stats", pwd)
+	}
+}
 
 func Collect() {
 	if !g.Config().Transfer.Enable {
@@ -93,7 +102,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Value:     vip.TotalActiveConn,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "USAGE",
+			Type:      "GAUGE",
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
@@ -104,7 +113,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Value:     vip.TotalInActConn,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "USAGE",
+			Type:      "GAUGE",
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
@@ -140,7 +149,7 @@ func ParseIPVSStats(file string) (metrics []*model.MetricValue, err error) {
 			Value:     value,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "USAGE",
+			Type:      "GAUGE",
 			Tags:      attachtags,
 		}
 		metrics = append(metrics, metric)
