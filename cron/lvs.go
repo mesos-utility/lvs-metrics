@@ -87,8 +87,8 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 
 				if strings.Contains(line, "->") {
 					array := strings.Fields(line)
-					act, _ := strconv.ParseInt(array[4], 16, 0)
-					inact, _ := strconv.ParseInt(array[5], 16, 0)
+					act, _ := strconv.ParseInt(array[4], 10, 0)
+					inact, _ := strconv.ParseInt(array[5], 10, 0)
 					totalAct += int(act)
 					totalInact += int(inact)
 				} else {
