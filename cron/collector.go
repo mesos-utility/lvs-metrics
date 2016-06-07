@@ -89,6 +89,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 
 	hostname, _ := g.Hostname()
 	now := time.Now().Unix()
+	var metric *model.MetricValue
 	for _, vip := range vips {
 		var tag string
 		if tags != "" {
@@ -96,7 +97,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 		} else {
 			tag = fmt.Sprintf("vip=%s,port=%d", vip.IP, vip.Port)
 		}
-		metric := &model.MetricValue{
+		metric = &model.MetricValue{
 			Endpoint:  hostname,
 			Metric:    "lvs.active.conn",
 			Value:     vip.TotalActiveConn,
@@ -111,6 +112,17 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Endpoint:  hostname,
 			Metric:    "lvs.inact.conn",
 			Value:     vip.TotalInActConn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.realserver.num",
+			Value:     vip.RealServerNum,
 			Timestamp: now,
 			Step:      interval,
 			Type:      "GAUGE",

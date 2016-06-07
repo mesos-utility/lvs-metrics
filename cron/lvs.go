@@ -30,6 +30,7 @@ type VirtualIPPoint struct {
 	Port            int
 	TotalActiveConn int
 	TotalInActConn  int
+	RealServerNum   int
 	// Realservers     [](*RealServer)
 }
 
@@ -46,7 +47,7 @@ func NewVirtualIPPoint(ip string, port, actconn, inactconn int) *VirtualIPPoint 
 func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 	var line string
 	var vip *VirtualIPPoint
-	var totalAct, totalInact int
+	var totalAct, totalInact, rsnum int
 
 	f, err := os.Open(file)
 	if err != nil {
@@ -65,6 +66,7 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 	CONT:
 		totalAct = 0
 		totalInact = 0
+		rsnum = 0
 
 		if find := RE.MatchString(line); find {
 			array := strings.Fields(line)
@@ -80,6 +82,7 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 						Port:            int(port),
 						TotalActiveConn: totalAct,
 						TotalInActConn:  totalInact,
+						RealServerNum:   rsnum,
 					}
 					vips = append(vips, vip)
 					break
@@ -91,6 +94,7 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 					inact, _ := strconv.ParseInt(array[5], 10, 0)
 					totalAct += int(act)
 					totalInact += int(inact)
+					rsnum += 1
 				} else {
 					vip = &VirtualIPPoint{
 						IP:              ipstr,
