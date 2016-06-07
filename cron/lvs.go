@@ -3,10 +3,14 @@ package cron
 import (
 	"bufio"
 	"fmt"
+	"net"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	"syscall"
+
+	"github.com/google/seesaw/ipvs"
 )
 
 var RE = regexp.MustCompile(`^TCP|^UDP`)
@@ -31,6 +35,13 @@ type VirtualIPPoint struct {
 	TotalActiveConn int
 	TotalInActConn  int
 	RealServerNum   int
+
+	// stats
+	Connections uint32
+	PacketsIn   uint32
+	PacketsOut  uint32
+	BytesIn     uint64
+	BytesOut    uint64
 	// Realservers     [](*RealServer)
 }
 
@@ -69,20 +80,60 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 		rsnum = 0
 
 		if find := RE.MatchString(line); find {
+			var srv *ipvs.Service
 			array := strings.Fields(line)
+			prot := array[0]
 			pair := strings.SplitN(array[1], ":", 2)
 			ipstr, _ := Hex2IPV4(pair[0])
 			port, _ := strconv.ParseInt(pair[1], 16, 0)
 
+			if prot == "TCP" {
+				srv = &ipvs.Service{
+					Address:  net.ParseIP(ipstr),
+					Protocol: syscall.IPPROTO_TCP,
+					Port:     uint16(port),
+				}
+			} else {
+				srv = &ipvs.Service{
+					Address:  net.ParseIP(ipstr),
+					Protocol: syscall.IPPROTO_UDP,
+					Port:     uint16(port),
+				}
+			}
+
+			srv, _ = ipvs.GetService(srv)
 			for {
 				line, err = r.ReadString('\n')
 				if err != nil {
-					vip = &VirtualIPPoint{
-						IP:              ipstr,
-						Port:            int(port),
-						TotalActiveConn: totalAct,
-						TotalInActConn:  totalInact,
-						RealServerNum:   rsnum,
+					if srv != nil {
+						vip = &VirtualIPPoint{
+							IP:              ipstr,
+							Port:            int(port),
+							TotalActiveConn: totalAct,
+							TotalInActConn:  totalInact,
+							RealServerNum:   rsnum,
+
+							Connections: srv.Statistics.Connections,
+							PacketsIn:   srv.Statistics.PacketsIn,
+							PacketsOut:  srv.Statistics.PacketsOut,
+							BytesIn:     srv.Statistics.BytesIn,
+							BytesOut:    srv.Statistics.BytesOut,
+						}
+
+					} else {
+						vip = &VirtualIPPoint{
+							IP:              ipstr,
+							Port:            int(port),
+							TotalActiveConn: totalAct,
+							TotalInActConn:  totalInact,
+							RealServerNum:   rsnum,
+
+							Connections: 0,
+							PacketsIn:   0,
+							PacketsOut:  0,
+							BytesIn:     0,
+							BytesOut:    0,
+						}
 					}
 					vips = append(vips, vip)
 					break

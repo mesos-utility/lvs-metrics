@@ -129,6 +129,61 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.vip.conns",
+			Value:     vip.Connections,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "COUNTER",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.vip.inpkts",
+			Value:     vip.PacketsIn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "COUNTER",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.vip.outpkts",
+			Value:     vip.PacketsOut,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "COUNTER",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.vip.inbytes",
+			Value:     vip.BytesIn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "COUNTER",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.vip.outbytes",
+			Value:     vip.BytesOut,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "COUNTER",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
 	}
 
 	return metrics, nil
