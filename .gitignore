@@ -1,0 +1,12 @@
+# bin
+lvs-metrics
+
+# logs
+var/*
+
+# cfg file
+cfg.json
+g/git.go
+
+# swp
+*.swp
