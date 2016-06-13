@@ -68,6 +68,7 @@ func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
 
 	// read line by line for parse.
 	r := bufio.NewReader(f)
+	ipvs.Init()
 	for {
 		line, err = r.ReadString('\n')
 		if err != nil {
