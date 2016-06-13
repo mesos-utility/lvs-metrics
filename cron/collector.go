@@ -20,16 +20,17 @@ var STATS = []string{
 	"in.bytes",
 	"out.bytes"}
 
-var IPVSFILE, IPVSSTATSFILE string
+//var IPVSFILE string
+var IPVSSTATSFILE string
 
 func init() {
-	IPVSFILE = "/proc/net/ip_vs"
+	//IPVSFILE = "/proc/net/ip_vs"
 	IPVSSTATSFILE = "/proc/net/ip_vs_stats"
 
 	if os.Getenv("LVSDEV") != "" {
 		pwd, _ := os.Getwd()
 
-		IPVSFILE = fmt.Sprintf("%s/resource/ip_vs", pwd)
+		//IPVSFILE = fmt.Sprintf("%s/resource/ip_vs", pwd)
 		IPVSSTATSFILE = fmt.Sprintf("%s/resource/ip_vs_stats", pwd)
 	}
 }
@@ -59,9 +60,9 @@ func collect() {
 		mvs := []*model.MetricValue{}
 
 		// Collect metrics from /proc/net/ip_vs
-		vips, err := ParseIPVS(IPVSFILE)
-		if os.IsNotExist(err) {
-			glog.Fatalf("%s", err.Error())
+		vips, err := GetIPVSStats()
+		if err != nil {
+			glog.Errorf("%s", err.Error())
 		}
 		mvs, _ = ConvertVIPs2Metrics(vips)
 		g.SendMetrics(mvs)
@@ -100,7 +101,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 		metric = &model.MetricValue{
 			Endpoint:  hostname,
 			Metric:    "lvs.active.conn",
-			Value:     vip.TotalActiveConn,
+			Value:     vip.ActiveConns,
 			Timestamp: now,
 			Step:      interval,
 			Type:      "GAUGE",
@@ -111,7 +112,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 		metric = &model.MetricValue{
 			Endpoint:  hostname,
 			Metric:    "lvs.inact.conn",
-			Value:     vip.TotalInActConn,
+			Value:     vip.InactiveConns,
 			Timestamp: now,
 			Step:      interval,
 			Type:      "GAUGE",

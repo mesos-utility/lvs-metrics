@@ -1,19 +1,10 @@
 package cron
 
 import (
-	"bufio"
 	"fmt"
-	"net"
-	"os"
-	"regexp"
-	"strconv"
-	"strings"
-	"syscall"
 
 	"github.com/google/seesaw/ipvs"
 )
-
-var RE = regexp.MustCompile(`^TCP|^UDP`)
 
 type RealServer struct {
 	IPPort     string
@@ -30,11 +21,11 @@ func NewRealServer(end string, actconn, inactconn int) *RealServer {
 }
 
 type VirtualIPPoint struct {
-	IP              string
-	Port            int
-	TotalActiveConn int
-	TotalInActConn  int
-	RealServerNum   int
+	IP            string
+	Port          int
+	ActiveConns   uint32
+	InactiveConns uint32
+	RealServerNum int
 
 	// stats
 	Connections uint32
@@ -45,140 +36,55 @@ type VirtualIPPoint struct {
 	// Realservers     [](*RealServer)
 }
 
-func NewVirtualIPPoint(ip string, port, actconn, inactconn int) *VirtualIPPoint {
+func NewVirtualIPPoint(ip string, port int, actconn, inactconn uint32) *VirtualIPPoint {
 	return &VirtualIPPoint{
-		IP:              ip,
-		Port:            port,
-		TotalActiveConn: actconn,
-		TotalInActConn:  inactconn,
+		IP:            ip,
+		Port:          port,
+		ActiveConns:   actconn,
+		InactiveConns: inactconn,
 	}
 }
 
-// Parse /proc/net/ip_vs
-func ParseIPVS(file string) (vips []*VirtualIPPoint, err error) {
-	var line string
-	var vip *VirtualIPPoint
-	var totalAct, totalInact, rsnum int
-
-	f, err := os.Open(file)
+func GetIPVSStats() (vips []*VirtualIPPoint, err error) {
+	ipvs.Init()
+	svcs, err := ipvs.GetServices()
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
 
-	// read line by line for parse.
-	r := bufio.NewReader(f)
-	ipvs.Init()
-	for {
-		line, err = r.ReadString('\n')
-		if err != nil {
-			break
+	var vip *VirtualIPPoint
+	var ActiveConns uint32
+	var InactiveConns uint32
+	var RsNum int
+	//var PersistConns uint32
+	for _, svc := range svcs {
+		ActiveConns = 0
+		InactiveConns = 0
+		RsNum = len(svc.Destinations)
+
+		for _, dest := range svc.Destinations {
+			ActiveConns += dest.Statistics.ActiveConns
+			InactiveConns += dest.Statistics.InactiveConns
+			//PersistConns += dest.Statistics.PersistConns
 		}
 
-	CONT:
-		totalAct = 0
-		totalInact = 0
-		rsnum = 0
+		ipstr := fmt.Sprintf("%v", svc.Address)
+		vip = &VirtualIPPoint{
+			IP:            ipstr,
+			Port:          int(svc.Port),
+			ActiveConns:   ActiveConns,
+			InactiveConns: InactiveConns,
+			RealServerNum: RsNum,
 
-		if find := RE.MatchString(line); find {
-			var srv *ipvs.Service
-			array := strings.Fields(line)
-			prot := array[0]
-			pair := strings.SplitN(array[1], ":", 2)
-			ipstr, _ := Hex2IPV4(pair[0])
-			port, _ := strconv.ParseInt(pair[1], 16, 0)
-
-			if prot == "TCP" {
-				srv = &ipvs.Service{
-					Address:  net.ParseIP(ipstr),
-					Protocol: syscall.IPPROTO_TCP,
-					Port:     uint16(port),
-				}
-			} else {
-				srv = &ipvs.Service{
-					Address:  net.ParseIP(ipstr),
-					Protocol: syscall.IPPROTO_UDP,
-					Port:     uint16(port),
-				}
-			}
-
-			srv, _ = ipvs.GetService(srv)
-			for {
-				line, err = r.ReadString('\n')
-				if err != nil {
-					if srv != nil {
-						vip = &VirtualIPPoint{
-							IP:              ipstr,
-							Port:            int(port),
-							TotalActiveConn: totalAct,
-							TotalInActConn:  totalInact,
-							RealServerNum:   rsnum,
-
-							Connections: srv.Statistics.Connections,
-							PacketsIn:   srv.Statistics.PacketsIn,
-							PacketsOut:  srv.Statistics.PacketsOut,
-							BytesIn:     srv.Statistics.BytesIn,
-							BytesOut:    srv.Statistics.BytesOut,
-						}
-
-					} else {
-						vip = &VirtualIPPoint{
-							IP:              ipstr,
-							Port:            int(port),
-							TotalActiveConn: totalAct,
-							TotalInActConn:  totalInact,
-							RealServerNum:   rsnum,
-
-							Connections: 0,
-							PacketsIn:   0,
-							PacketsOut:  0,
-							BytesIn:     0,
-							BytesOut:    0,
-						}
-					}
-					vips = append(vips, vip)
-					break
-				}
-
-				if strings.Contains(line, "->") {
-					array := strings.Fields(line)
-					act, _ := strconv.ParseInt(array[4], 10, 0)
-					inact, _ := strconv.ParseInt(array[5], 10, 0)
-					totalAct += int(act)
-					totalInact += int(inact)
-					rsnum += 1
-				} else {
-					vip = &VirtualIPPoint{
-						IP:              ipstr,
-						Port:            int(port),
-						TotalActiveConn: totalAct,
-						TotalInActConn:  totalInact,
-					}
-					vips = append(vips, vip)
-					goto CONT
-				}
-			}
+			Connections: svc.Statistics.Connections,
+			PacketsIn:   svc.Statistics.PacketsIn,
+			PacketsOut:  svc.Statistics.PacketsOut,
+			BytesIn:     svc.Statistics.BytesIn,
+			BytesOut:    svc.Statistics.BytesOut,
 		}
+
+		vips = append(vips, vip)
 	}
 
 	return vips, nil
-}
-
-func Hex2IPV4(hexip string) (ip string, err error) {
-	if len(hexip) != 8 {
-		return "", fmt.Errorf("Invalid format of ipv4.")
-	}
-
-	var array []int
-	for i := 0; i < 4; i++ {
-		pos := 2 * (i + 1)
-		num, _ := strconv.ParseInt(hexip[2*i:pos], 16, 0)
-		array = append(array, int(num))
-	}
-
-	if len(array) != 4 {
-		return "", fmt.Errorf("Invalid format of ipv4.")
-	} else {
-		return fmt.Sprintf("%v.%v.%v.%v", array[0], array[1], array[2], array[3]), nil
-	}
 }
