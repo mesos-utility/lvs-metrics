@@ -10,3 +10,4 @@ g/git.go
 
 # swp
 *.swp
+Godeps/_workspace

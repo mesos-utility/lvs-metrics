@@ -11,7 +11,7 @@ bin: godep
 ## Get godep and restore dep.
 godep:
 	@go get -u github.com/tools/godep
-	#GO15VENDOREXPERIMENT=0 GOPATH=`godep path` godep restore
+	GO15VENDOREXPERIMENT=0 GOPATH=`godep path` godep restore
 
 ## Get vet go tools.
 vet:

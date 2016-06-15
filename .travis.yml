@@ -13,7 +13,6 @@ env:
 #install: true
 script:
   - make validate
-  - make test
   - make bin
 
 notifications:
