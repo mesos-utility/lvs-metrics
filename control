@@ -17,7 +17,6 @@ function build() {
     export GO15VENDOREXPERIMENT=0
     #GOPATH=`godep path` godep restore
     GOPATH="`godep path`:$GOPATH" && go build -i -ldflags "-X g.Commit=${COMMIT}" -o $app .
-    #GO15VENDOREXPERIMENT=1; go build -o $app main.go
 
     sc=$?
     if [ $sc -ne 0 ];then
