@@ -1,16 +1,18 @@
 default: help
 
+$(shell go get -u github.com/tools/godep)
+
 COMMIT := $(shell git rev-parse HEAD 2> /dev/null || true)
 GOPATH := $(shell godep path):${GOPATH}
 
 ## Make bin for lvs-metrics.
-bin:
+bin: godep
 	#./control build
 	go build -i -ldflags "-X g.Commit=${COMMIT}" -o lvs-metrics .
 
 ## Get godep and restore dep.
 godep:
-	@go get -u github.com/tools/godep
+	#@go get -u github.com/tools/godep
 	GO15VENDOREXPERIMENT=0 GOPATH=`godep path` godep restore
 
 ## Get vet go tools.
