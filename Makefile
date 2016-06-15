@@ -1,11 +1,11 @@
 default: help
 
 COMMIT := $(shell git rev-parse HEAD 2> /dev/null || true)
+GOPATH := $(shell godep path):${GOPATH}
 
 ## Make bin for lvs-metrics.
-bin: godep
+bin:
 	#./control build
-	GOPATH=`godep path`
 	go build -i -ldflags "-X g.Commit=${COMMIT}" -o lvs-metrics .
 
 ## Get godep and restore dep.
