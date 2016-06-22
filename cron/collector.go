@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	"github.com/google/seesaw/ipvs"
 	"github.com/mesos-utility/lvs-metrics/g"
 	"github.com/open-falcon/common/model"
 )
@@ -54,6 +55,7 @@ func collect() {
 	var interval int64 = g.Config().Transfer.Interval
 	var ticker = time.NewTicker(time.Duration(interval) * time.Second)
 
+	ipvs.Init()
 	for {
 		<-ticker.C
 

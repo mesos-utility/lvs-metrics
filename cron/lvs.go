@@ -46,7 +46,6 @@ func NewVirtualIPPoint(ip string, port int, actconn, inactconn uint32) *VirtualI
 }
 
 func GetIPVSStats() (vips []*VirtualIPPoint, err error) {
-	ipvs.Init()
 	svcs, err := ipvs.GetServices()
 	if err != nil {
 		return nil, err

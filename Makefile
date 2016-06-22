@@ -1,19 +1,22 @@
-default: help
-
+default: help 
 $(shell go get -u github.com/tools/godep)
 
 COMMIT := $(shell git rev-parse HEAD 2> /dev/null || true)
-GOPATH := $(shell godep path):${GOPATH}
+CURDIR_LINK := $(CURDIR)/Godeps/_workspace/src/github.com/mesos-utility/lvs-metrics
+export GOPATH := $(CURDIR)/Godeps/_workspace
 
 ## Make bin for lvs-metrics.
-bin:
-	./control build
-	#go build -i -ldflags "-X g.Commit=${COMMIT}" -o lvs-metrics .
+bin: ${CURDIR_LINK}
+	#./control build
+	go build -i -ldflags "-X g.Commit=${COMMIT}" -o lvs-metrics .
 
 ## Get godep and restore dep.
 godep:
 	@go get -u github.com/tools/godep
 	GO15VENDOREXPERIMENT=0 GOPATH=`godep path` godep restore
+
+$(CURDIR_LINK):
+	ln -sfn $(CURDIR) $(CURDIR_LINK)
 
 ## Get vet go tools.
 vet:
@@ -26,7 +29,7 @@ validate:
 
 ## Run test case for this go project.
 test:
-	go list ./... | grep -v 'vendor' | xargs -L1 go test -v
+	go test -v ./...
 
 ## Clean everything (including stray volumes).
 clean:
