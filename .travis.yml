@@ -13,6 +13,7 @@ env:
 #install: true
 script:
   - make validate
+  - make godep
   - make bin
 
 notifications:
