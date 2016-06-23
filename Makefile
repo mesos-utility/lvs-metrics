@@ -2,7 +2,9 @@ default: help
 $(shell go get -u github.com/tools/godep)
 
 COMMIT := $(shell git rev-parse HEAD 2> /dev/null || true)
-CURDIR_LINK := $(CURDIR)/Godeps/_workspace/src/github.com/mesos-utility/lvs-metrics
+GITHUB_SRC := github.com/mesos-utility
+MODULE := lvs-metrics
+CURDIR_LINK := $(CURDIR)/Godeps/_workspace/src/$(GITHUB_SRC)
 export GOPATH := $(CURDIR)/Godeps/_workspace
 
 ## Make bin for lvs-metrics.
@@ -16,7 +18,8 @@ godep:
 	GO15VENDOREXPERIMENT=0 GOPATH=`godep path` godep restore
 
 $(CURDIR_LINK):
-	ln -sfn $(CURDIR) $(CURDIR_LINK)
+	mkdir -p $(CURDIR_LINK)
+	ln -sfn $(CURDIR) $(CURDIR_LINK)/$(MODULE)
 
 ## Get vet go tools.
 vet:
