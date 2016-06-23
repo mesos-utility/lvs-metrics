@@ -1,5 +1,5 @@
 language: go
-sudo: false
+sudo: true
 
 go:
   - 1.5.3
@@ -9,6 +9,10 @@ go:
 env:
   global:
     - GO15VENDOREXPERIMENT=1
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libnl-3-dev libnl-genl-3-dev
 
 #install: true
 script:
