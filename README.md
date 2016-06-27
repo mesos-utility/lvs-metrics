@@ -27,22 +27,63 @@ or
 # sudo apt-get install libnl-3-dev libnl-genl-3-dev
 ```
 
+## Configuration
+
+Edit cfg.json configuration file.
+
+```console
+{
+    "debug": false,
+    "attachtags": "",
+    "http": {
+        "enable": false,
+        "listen": "0.0.0.0:1987"
+    },
+    "transfer": {
+        "enable": true,
+        "addr": "http://127.0.0.1:1988/v1/push", # Installed falcon agent in host.
+        "interval": 30,
+        "timeout": 1000
+    }
+}
+
+or
+
+{
+    "debug": false,
+    "attachtags": "",
+    "http": {
+        "enable": false,
+        "listen": "0.0.0.0:1987"
+    },
+    "transfer": {
+        "enable": true,
+        "addr": "127.0.0.1:8433", # Send metrics to transfer direct.
+        "interval": 30,
+        "timeout": 1000
+    }
+}
+```
+
+
+
 ## Metrics
-| Counters | Notes|
-|-----|------|
-|lvs.in.bytes|network in bytes per host|
-|lvs.out.bytes|network out bytes per host|
-|lvs.in.packets|network in packets per host|
-|lvs.out.packets|network out packets per host|
-|lvs.total.conns|lvs total connections per vip now|
-|lvs.active.conn|lvs active connections per vip now|
-|lvs.inact.conn|lvs inactive connections per vip now|
-|lvs.realserver.num|lvs live realserver num per vip now|
-|lvs.vip.conns|lvs conns counter from service start per vip|
-|lvs.vip.inbytes|lvs inbytes counter from service start per vip|
-|lvs.vip.outbytes|lvs outpkts counter from service start per vip|
-|lvs.vip.inpkts|lvs inpkts counter from service start per vip|
-|lvs.vip.outpkts|lvs outpkts counter from service start per vip|
+
+| Counters | Type | Notes |
+|-----|-----|-----|
+| lvs.in.bytes | GUAGE | network in bytes per host |
+| lvs.out.bytes | GUAGE | network out bytes per host |
+| lvs.in.packets | GUAGE | network in packets per host |
+| lvs.out.packets | GUAGE | network out packets per host |
+| lvs.total.conns | GUAGE | lvs total connections per vip now |
+| lvs.active.conn | GUAGE | lvs active connections per vip now |
+| lvs.inact.conn | GUAGE | lvs inactive connections per vip now |
+| lvs.realserver.num | GUAGE | lvs live realserver num per vip now |
+| lvs.vip.conns | COUNTER | lvs conns counter from service start per vip |
+| lvs.vip.inbytes | COUNTER | lvs inbytes counter from service start per vip |
+| lvs.vip.outbytes | COUNTER | lvs outpkts counter from service start per vip |
+| lvs.vip.inpkts | COUNTER | lvs inpkts counter from service start per vip |
+| lvs.vip.outpkts | COUNTER | lvs outpkts counter from service start per vip |
 
 
 [libnl]: https://www.infradead.org/~tgr/libnl
