@@ -75,7 +75,7 @@ or
 | lvs.out.bytes | GUAGE | network out bytes per host |
 | lvs.in.packets | GUAGE | network in packets per host |
 | lvs.out.packets | GUAGE | network out packets per host |
-| lvs.total.conns | GUAGE | lvs total connections per vip now |
+| lvs.total.conns | GUAGE | lvs total connections per host |
 | lvs.active.conn | GUAGE | lvs active connections per vip now |
 | lvs.inact.conn | GUAGE | lvs inactive connections per vip now |
 | lvs.realserver.num | GUAGE | lvs live realserver num per vip now |
