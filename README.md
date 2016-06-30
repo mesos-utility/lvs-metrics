@@ -15,17 +15,21 @@ Dependencies are handled by [godep][], simple install it and type `godep restore
 
 ## Install
 
-```console
-$ git clone https://github.com/mesos-utility/lvs-metrics.git
-$ cd lvs-metrics
-$ make bin
-```
+#### The libnl3 needed in compile and production machine.
 
 ```console
 # sudo yum install -y libnl3.x86_64
 or
 # sudo apt-get install libnl-3-dev libnl-genl-3-dev
 ```
+
+#### Only needed in compile machine.
+```console
+$ git clone https://github.com/mesos-utility/lvs-metrics.git
+$ cd lvs-metrics
+$ make bin
+```
+
 
 ## Configuration
 
@@ -87,8 +91,8 @@ or
 
 
 [libnl]: https://www.infradead.org/~tgr/libnl
-[ipvs]: https://github.com/google/seesaw/ipvs
-[netlink]: https://github.com/google/seesaw/netlink
+[ipvs]: https://github.com/google/seesaw
+[netlink]: https://github.com/google/seesaw
 [toolkits]: https://github.com/toolkits
 [glog]: https://github.com/golang/glog
 [godep]: https://github.com/tools/godep
