@@ -5,7 +5,7 @@ lvs metrics collector for open-falcon.
 
 ## Dependencies
 
-* [libnl][]
+* [libnl3][]
 * [ipvs][]
 * [netlink][]
 * [toolkits][]
@@ -90,7 +90,7 @@ or
 | lvs.vip.outpkts | COUNTER | lvs outpkts counter from service start per vip |
 
 
-[libnl]: https://www.infradead.org/~tgr/libnl
+[libnl3]: https://www.infradead.org/~tgr/libnl
 [ipvs]: https://github.com/google/seesaw
 [netlink]: https://github.com/google/seesaw
 [toolkits]: https://github.com/toolkits
