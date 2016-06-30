@@ -11,3 +11,5 @@ g/git.go
 # swp
 *.swp
 #Godeps/_workspace
+Godeps/_workspace/pkg
+Godeps/_workspace/bin
