@@ -102,7 +102,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 		}
 		metric = &model.MetricValue{
 			Endpoint:  hostname,
-			Metric:    "lvs.active.conn",
+			Metric:    "lvs.vip.active_conn",
 			Value:     vip.ActiveConns,
 			Timestamp: now,
 			Step:      interval,
@@ -113,7 +113,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 
 		metric = &model.MetricValue{
 			Endpoint:  hostname,
-			Metric:    "lvs.inact.conn",
+			Metric:    "lvs.vip.inact_conn",
 			Value:     vip.InactiveConns,
 			Timestamp: now,
 			Step:      interval,
@@ -124,7 +124,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 
 		metric = &model.MetricValue{
 			Endpoint:  hostname,
-			Metric:    "lvs.realserver.num",
+			Metric:    "lvs.vip.rs_num",
 			Value:     vip.RealServerNum,
 			Timestamp: now,
 			Step:      interval,

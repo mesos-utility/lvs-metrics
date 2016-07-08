@@ -80,9 +80,9 @@ or
 | lvs.in.packets | GUAGE | network in packets per host |
 | lvs.out.packets | GUAGE | network out packets per host |
 | lvs.total.conns | GUAGE | lvs total connections per host |
-| lvs.active.conn | GUAGE | lvs active connections per vip now |
-| lvs.inact.conn | GUAGE | lvs inactive connections per vip now |
-| lvs.realserver.num | GUAGE | lvs live realserver num per vip now |
+| lvs.vip.active_conn | GUAGE | lvs active connections per vip now |
+| lvs.vip.inact_conn | GUAGE | lvs inactive connections per vip now |
+| lvs.vip.rs_num | GUAGE | lvs live realserver num per vip now |
 | lvs.vip.conns | COUNTER | lvs conns counter from service start per vip |
 | lvs.vip.inbytes | COUNTER | lvs inbytes counter from service start per vip |
 | lvs.vip.outbytes | COUNTER | lvs outpkts counter from service start per vip |
