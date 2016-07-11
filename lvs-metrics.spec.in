@@ -1,0 +1,51 @@
+%define prefix   /opt/work
+
+Summary: Utility of collect lvs metrics to open-falcon
+Name: lvs-metrics
+Version: @@VERSION@@
+Release: @@RELEASE@@
+License: GPL
+URL: https://github.com/mesos-utility/lvs-metrics/
+Group: Applications/System
+Source0: https://github.com/mesos-utility/lvs-metrics/archive/lvs-metrics-%{version}.tar.gz
+BuildRoot: /var/tmp/%name-%{PACKAGE_VERSION}-root
+Provides: %{name}-%{version}
+
+requires: libnl3
+
+%description
+lvs-metrics is a utility of collect lvs metrics to open-falcon.
+
+
+%prep
+%setup -n %{name}-%{version}
+
+
+%build
+make bin
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p ${RPM_BUILD_ROOT}/%{prefix}
+make install BUILD_ROOT=${RPM_BUILD_ROOT}/%{prefix}/%{name} MANDIR=${RPM_BUILD_ROOT}/%{prefix}/%{name}
+
+
+%files
+%defattr(-,root,root)
+%{prefix}/%{name}/*
+
+
+#%post
+#/sbin/chkconfig --add %{name}
+#
+#%preun
+#/sbin/chkconfig --del %{name}
+#
+
+%clean
+rm -rf $RPM_BUILD_DIR/%{prefix}
+rm -rf $RPM_BUILD_ROOT
+
+
+%changelog
