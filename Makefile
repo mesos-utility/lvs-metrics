@@ -60,8 +60,8 @@ clean:
 	-rm -f ${NAME}.spec
 
 
-# Install action for lvs-metrics rpm package build.
-install:
+# Rpm install action for lvs-metrics rpm package build.
+rpm-install:
 	if [ ! -d $(BIN) ]; then $(MKDIR) -p $(BIN); fi
 	$(INSTALL) -m 0755 $(NAME) $(BIN)
 	$(INSTALL) -m 0644 cfg.json $(BIN)

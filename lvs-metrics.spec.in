@@ -1,4 +1,5 @@
 %define prefix   /opt/work
+%define debug_package %{nil}
 
 Summary: Utility of collect lvs metrics to open-falcon
 Name: lvs-metrics
@@ -28,7 +29,7 @@ make bin
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p ${RPM_BUILD_ROOT}/%{prefix}
-make install BUILD_ROOT=${RPM_BUILD_ROOT}/%{prefix}/%{name} MANDIR=${RPM_BUILD_ROOT}/%{prefix}/%{name}
+make rpm-install BUILD_ROOT=${RPM_BUILD_ROOT}/%{prefix}/%{name} MANDIR=${RPM_BUILD_ROOT}/%{prefix}/%{name}
 
 
 %files
