@@ -53,7 +53,7 @@ func CalculateMetricRatio(metrics ...string) string {
 // display version info.
 func HandleVersion(displayVersion bool) {
 	if displayVersion {
-		fmt.Println(VERSION)
+		fmt.Println(Version)
 		os.Exit(0)
 	}
 }

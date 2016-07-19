@@ -12,7 +12,7 @@ MKDIR	= mkdir
 INSTALL	= install
 BIN		= $(BUILD_ROOT)
 MAN		= $(BIN)
-VERSION	= $(shell cat VERSION)
+VERSION	= $(shell git describe --tags)
 RELEASE	= 0
 RPMSOURCEDIR	= $(shell rpm --eval '%_sourcedir')
 RPMSPECDIR	= $(shell rpm --eval '%_specdir')
@@ -26,7 +26,7 @@ RPMBUILD = $(shell				\
 ## Make bin for lvs-metrics.
 bin: ${CURDIR_LINK}
 	#./control build
-	go build -i -ldflags "-X g.Commit=${COMMIT}" -o lvs-metrics .
+	go build -i -ldflags "-X github.com/mesos-utility/lvs-metrics/g.Version=${VERSION}" -o lvs-metrics .
 
 ## Get godep and restore dep.
 godep:

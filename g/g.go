@@ -4,10 +4,9 @@ import (
 	"runtime"
 )
 
-const (
-	VERSION = "0.2.0"
-	Commit  = ""
-)
+// version will be populated by the Makefile, read from
+// VERSION file of the source code.
+var Version = ""
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
