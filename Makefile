@@ -12,7 +12,7 @@ MKDIR	= mkdir
 INSTALL	= install
 BIN		= $(BUILD_ROOT)
 MAN		= $(BIN)
-VERSION	= $(shell git describe --tags)
+VERSION	= $(shell git describe --tags --abbrev=0 2> /dev/null)
 RELEASE	= 0
 RPMSOURCEDIR	= $(shell rpm --eval '%_sourcedir')
 RPMSPECDIR	= $(shell rpm --eval '%_specdir')
