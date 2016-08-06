@@ -1,4 +1,4 @@
-%define prefix   /opt/work
+%define prefix   /opt/opbin
 %define debug_package %{nil}
 
 Summary: Utility of collect lvs metrics to open-falcon

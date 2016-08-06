@@ -7,7 +7,7 @@
     },
     "transfer": {
         "enable": true,
-        "addr": "http://127.0.0.1:1988/v1/push", // http://127.0.0.1:1988/v1/push or 127.0.0.1:8433
+        "addr": "http://127.0.0.1:1988/v1/push",
         "interval": 30,
         "timeout": 1000
     }
