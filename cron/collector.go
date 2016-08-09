@@ -72,7 +72,7 @@ func collect() {
 		// Collect metrics from /proc/net/ip_vs_stats
 		mvs, err = ParseIPVSStats(IPVSSTATSFILE)
 		if os.IsNotExist(err) {
-			glog.Fatalf("%s", err.Error())
+			glog.Errorf("%s", err.Error())
 		}
 		g.SendMetrics(mvs)
 	}
