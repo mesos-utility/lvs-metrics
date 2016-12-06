@@ -1,5 +1,4 @@
 default: help 
-$(shell go get -u github.com/tools/godep)
 
 NAME := lvs-metrics
 COMMIT := $(shell git rev-parse HEAD 2> /dev/null || true)
@@ -25,7 +24,6 @@ RPMBUILD = $(shell				\
 
 ## Make bin for lvs-metrics.
 bin: ${CURDIR_LINK}
-	#./control build
 	go build -i -ldflags "-X github.com/mesos-utility/lvs-metrics/g.Version=${VERSION}" -o lvs-metrics .
 
 ## Get godep and restore dep.
@@ -53,7 +51,6 @@ test:
 
 ## Clean everything (including stray volumes).
 clean:
-#	find . -name '*.created' -exec rm -f {} +
 	-rm -rf var
 	-rm -f ${NAME}
 	-rm -f ${NAME}-*.tar.gz
@@ -103,4 +100,3 @@ help: # Some kind of magic from https://gist.github.com/rcmachado/af3db315e31383
 	{ helpMsg = $$0 }'                                             \
 	width=$$(grep -o '^[a-zA-Z_0-9]\+:' $(MAKEFILE_LIST) | wc -L)  \
 	$(MAKEFILE_LIST)
-
