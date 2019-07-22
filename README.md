@@ -85,7 +85,7 @@ or
 | lvs.vip.rs_num | GUAGE | lvs live realserver num per vip now |
 | lvs.vip.conns | COUNTER | lvs conns counter from service start per vip |
 | lvs.vip.inbytes | COUNTER | lvs inbytes counter from service start per vip |
-| lvs.vip.outbytes | COUNTER | lvs outpkts counter from service start per vip |
+| lvs.vip.outbytes | COUNTER | lvs outbytes counter from service start per vip |
 | lvs.vip.inpkts | COUNTER | lvs inpkts counter from service start per vip |
 | lvs.vip.outpkts | COUNTER | lvs outpkts counter from service start per vip |
 
